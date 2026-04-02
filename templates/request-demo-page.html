@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{{url_for('static', filename='image.png')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.js" integrity="sha512-o4gKX6jcK0rdciOZ9X8COYkV9gviTJAbYEVW8aC3OgIRuaKDmcT9/OFXBVzHSSOxiTjsTktqrUvCUrHkQHSn9Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionXpert - Request a Demo</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --surface: #1e2139;
+            --surface-elevated: #252847;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #334155;
+            --border-light: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glassmorphism: rgba(255, 255, 255, 0.05);
+            --glassmorphism-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Modern glassmorphism navbar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(15, 15, 35, 0.8);
+            border-bottom: 1px solid var(--glassmorphism-border);
+            padding: 1rem 0;
+        }
+        
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+            background: var(--glassmorphism);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glassmorphism-border);
+        }
+
+        /* Hero section with modern typography */
+        .hero {
+            margin-top: 100px;
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        /* Modern form container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Enhanced glassmorphism cards */
+        .form-section {
+            background: var(--glassmorphism);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glassmorphism-border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+        
+        .form-section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .form-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        /* Modern form inputs */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .required::after {
+            content: '*';
+            color: var(--error);
+            margin-left: 4px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: var(--surface-elevated);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Custom select styling */
+        select.form-control {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px;
+            padding-right: 3rem;
+        }
+
+        /* Modern checkbox styling */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--surface);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: var(--surface-elevated);
+        }
+        
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            margin: 0;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Date time group */
+        .date-time-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .date-time-group .form-control {
+            flex: 1;
+        }
+
+        /* Modernized pricing cards */
+        .plans-section {
+            margin: 4rem 0;
+        }
+
+        .plans-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .plans-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .plan-card {
+            background: var(--glassmorphism);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glassmorphism-border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .plan-card:hover::before {
+            opacity: 1;
+        }
+
+        .plan-card.featured {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+        }
+
+        .plan-card.featured::before {
+            opacity: 1;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .plan-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+        
+        .plan-features li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Modern radio button styling */
+        .radio-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .radio-plan input[type="radio"] {
+            display: none;
+        }
+        
+        .radio-plan label {
+            display: block;
+            padding: 1rem 1.5rem;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .radio-plan input[type="radio"]:checked + label {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .radio-plan label:hover {
+            border-color: var(--primary);
+            background: var(--surface-elevated);
+        }
+
+        /* Modern button styling */
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: inherit;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-lg {
+            padding: 1.25rem 3rem;
+            font-size: 1.1rem;
+            border-radius: 20px;
+        }
+
+        /* Submit section */
+        .submit-section {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        /* Trust badges with modern design */
+        .trust-badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--glassmorphism);
+            border-radius: 20px;
+            border: 1px solid var(--glassmorphism-border);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .badge-icon {
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .badge span {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Modern footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-link {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: var(--surface);
+        }
+        
+        .social-link:hover {
+            color: var(--primary);
+            background: var(--surface-elevated);
+            transform: translateY(-2px);
+        }
+
+        /* Dark mode toggle with modern design */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: var(--glassmorphism);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glassmorphism-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .date-time-group {
+                flex-direction: column;
+            }
+
+            .radio-plans {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-badges {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .trust-badges {
+                grid-template-columns: 1fr;
+            }
+
+            .plans-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Micro-interactions */
+        .form-section, .plan-card, .badge {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .form-section:nth-child(1) { animation-delay: 0.1s; }
+        .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .plan-card:nth-child(1) { animation-delay: 0.1s; }
+        .plan-card:nth-child(2) { animation-delay: 0.2s; }
+        .plan-card:nth-child(3) { animation-delay: 0.3s; }
+        .plan-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Modern Header with Glassmorphism -->
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🔍</div>
+                VisionXpert
+            </a>
+            <div class="nav-links">
+                <a href="userlog.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                <a href="about-us-page.html" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    About Us
+                </a>
+                <a href="request-demo-page.html" class="nav-link active">
+                    <i class="fas fa-bolt"></i>
+                    Request Demo
+                </a>
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div id="background-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+
+    <!-- Modern Hero Section -->
+    <section class="hero">
+        <h1>Experience the Future of Security</h1>
+        <p>Discover how VisionXpert's anomaly detection transforms security monitoring with cutting-edge technology</p>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container">
+        <form id="demo-request-form">
+            <div class="form-container">
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h2>Contact Information</h2>
+                    <div class="form-group">
+                        <label for="fullName" class="required">Full Name</label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobTitle" class="required">Job Title</label>
+                        <input type="text" id="jobTitle" class="form-control" placeholder="Enter your job title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="required">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="required">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company" class="required">Company Name</label>
+                        <input type="text" id="company" class="form-control" placeholder="Enter your company name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="companySize">Company Size</label>
+                        <select id="companySize" class="form-control">
+                            <option value="" selected disabled>Select company size</option>
+                            <option value="1-10">1-10 employees</option>
+                            <option value="11-50">11-50 employees</option>
+                            <option value="51-200">51-200 employees</option>
+                            <option value="201-500">201-500 employees</option>
+                            <option value="501-1000">501-1000 employees</option>
+                            <option value="1000+">1000+ employees</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Demo Requirements Section -->
+                <div class="form-section">
+                    <h2>Demo Requirements</h2>
+                    <div class="form-group">
+                        <label class="required">Which features interest you most?</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="weaponDetection" class="checkbox-input" name="features" value="Weapon Detection">
+                                <label for="weaponDetection">Weapon Detection</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="accidentDetection" class="checkbox-input" name="features" value="Accident Detection">
+                                <label for="accidentDetection">Accident Detection</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="explosionDetection" class="checkbox-input" name="features" value="Explosion Detection">
+                                <label for="explosionDetection">Explosion Detection</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="faceRecognition" class="checkbox-input" name="features" value="Face Recognition">
+                                <label for="faceRecognition">Face Recognition</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="suspiciousBehavior" class="checkbox-input" name="features" value="Suspicious Behavior Analysis">
+                                <label for="suspiciousBehavior">Suspicious Behavior</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="otherFeatures" class="checkbox-input" name="features" value="Other Features">
+                                <label for="otherFeatures">Other Features</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cameraCount">Number of Cameras</label>
+                        <select id="cameraCount" class="form-control">
+                            <option value="" selected disabled>Select camera count</option>
+                            <option value="1-5">1-5 cameras</option>
+                            <option value="6-20">6-20 cameras</option>
+                            <option value="21-50">21-50 cameras</option>
+                            <option value="51-100">51-100 cameras</option>
+                            <option value="101-500">101-500 cameras</option>
+                            <option value="500+">500+ cameras</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="demoDate" class="required">Preferred Demo Date</label>
+                        <div class="date-time-group">
+                            <input type="date" id="demoDate" class="form-control" required>
+                            <select id="demoTime" class="form-control">
+                                <option value="" selected disabled>Select time</option>
+                                <option value="9:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentSolution">Current Security Solution</label>
+                        <textarea id="currentSolution" class="form-control" rows="3" placeholder="Describe your current security monitoring solution (if any)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="requirements">Specific Requirements</label>
+                        <textarea id="requirements" class="form-control" rows="4" placeholder="Share any specific requirements or questions you have"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modern Pricing Plans Section -->
+            <div class="plans-section">
+                <h2>Choose Your Plan</h2>
+                <div class="plans-container">
+                    <!-- Starter Plan -->
+                    <div class="plan-card">
+                        <h3 class="plan-name">Starter</h3>
+                        <div class="plan-price">₹599<span>/month</span></div>
+                        <ul class="plan-features">
+                            <li>Basic anomaly detection</li>
+                            <li>Up to 5 cameras</li>
+                            <li>Email notifications</li>
+                            <li>Web dashboard access</li>
+                            <li>Business hours support</li>
+                            <li>Monthly reports</li>
+                        </ul>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="plan-card featured">
+                        <div class="plan-badge">Most Popular</div>
+                        <h3 class="plan-name">Professional</h3>
+                        <div class="plan-price">₹999<span>/month</span></div>
+                        <ul class="plan-features">
+                            <li>Advanced AI detection</li>
+                            <li>Up to 25 cameras</li>
+                            <li>Multi-channel alerts</li>
+                            <li>Mobile app access</li>
+                            <li>24/7 priority support</li>
+                            <li>Real-time analytics</li>
+                            <li>Custom integrations</li>
+                        </ul>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="plan-card">
+                        <h3 class="plan-name">Enterprise</h3>
+                        <div class="plan-price">₹1999<span>/month</span></div>
+                        <ul class="plan-features">
+                            <li>Complete security suite</li>
+                            <li>Unlimited cameras</li>
+                            <li>Advanced behavior analysis</li>
+                            <li>Dedicated dashboard</li>
+                            <li>Account manager</li>
+                            <li>Custom training</li>
+                            <li>SLA guarantees</li>
+                            <li>On-site support</li>
+                        </ul>
+                    </div>
+
+                    <!-- Custom Plan -->
+                    <div class="plan-card">
+                        <h3 class="plan-name">Custom</h3>
+                        <div class="plan-price">Custom<span> pricing</span></div>
+                        <ul class="plan-features">
+                            <li>Tailored feature set</li>
+                            <li>Flexible deployment</li>
+                            <li>Custom integrations</li>
+                            <li>Specialized training</li>
+                            <li>White-label options</li>
+                            <li>Enterprise-grade security</li>
+                            <li>Dedicated infrastructure</li>
+                            <li>24/7 premium support</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Plan Selection -->
+                <div class="form-section" style="max-width: 800px; margin: 0 auto;">
+                    <h2>Select Your Preferred Plan</h2>
+                    <div class="radio-plans">
+                        <div class="radio-plan">
+                            <input type="radio" id="starterPlan" name="plan" value="Starter Plan">
+                            <label for="starterPlan">Starter Plan<br><small>₹599/month</small></label>
+                        </div>
+                        <div class="radio-plan">
+                            <input type="radio" id="professionalPlan" name="plan" value="Professional Plan">
+                            <label for="professionalPlan">Professional Plan<br><small>₹999/month</small></label>
+                        </div>
+                        <div class="radio-plan">
+                            <input type="radio" id="enterprisePlan" name="plan" value="Enterprise Plan">
+                            <label for="enterprisePlan">Enterprise Plan<br><small>₹1999/month</small></label>
+                        </div>
+                        <div class="radio-plan">
+                            <input type="radio" id="customSolution" name="plan" value="Custom Solution">
+                            <label for="customSolution">Custom Solution<br><small>Contact us</small></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-rocket"></i>
+                    Schedule My Demo
+                </button>
+                
+                <div class="trust-badges">
+                    <div class="badge">
+                        <div class="badge-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Enterprise Security</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <span>No Commitment</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <span>Expert Guidance</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <span>Data Protected</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#" class="social-link">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <p class="copyright">© 2025 VisionXpert. All rights reserved. | Designed in India 🇮🇳</p>
+        </div>
+    </footer>
+
+    <!-- Modern Dark Mode Toggle -->
+    <div class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Enhanced form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date for demo scheduling (tomorrow)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const formattedTomorrow = tomorrow.toISOString().split('T')[0];
+            document.getElementById('demoDate').min = formattedTomorrow;
+            
+            // Form submission with modern validation
+            const form = document.getElementById('demo-request-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Enhanced validation
+                if (validateForm()) {
+                    const formData = collectFormData();
+                    submitForm(formData);
+                }
+            });
+
+            // Real-time validation
+            const inputs = document.querySelectorAll('.form-control[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', validateField);
+                input.addEventListener('input', clearError);
+            });
+        });
+
+        function validateForm() {
+            let isValid = true;
+            
+            // Validate required fields
+            const requiredFields = document.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    showFieldError(field, 'This field is required');
+                    isValid = false;
+                } else {
+                    clearFieldError(field);
+                }
+            });
+            
+            // Validate email
+            const email = document.getElementById('email');
+            if (email.value && !isValidEmail(email.value)) {
+                showFieldError(email, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Validate phone
+            const phone = document.getElementById('phone');
+            if (phone.value && !isValidPhone(phone.value)) {
+                showFieldError(phone, 'Please enter a valid phone number');
+                isValid = false;
+            }
+            
+            // Check features selection
+            const features = document.querySelectorAll('input[name="features"]:checked');
+            if (features.length === 0) {
+                showError('Please select at least one feature you\'re interested in');
+                isValid = false;
+            }
+            
+            // Check plan selection
+            const plan = document.querySelector('input[name="plan"]:checked');
+            if (!plan) {
+                showError('Please select a plan');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        function validateField(e) {
+            const field = e.target;
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                showFieldError(field, 'This field is required');
+            } else {
+                clearFieldError(field);
+            }
+        }
+
+        function clearError(e) {
+            clearFieldError(e.target);
+        }
+
+        function showFieldError(field, message) {
+            field.style.borderColor = 'var(--error)';
+            field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+            
+            // Remove existing error message
+            const existingError = field.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Add error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.color = 'var(--error)';
+            errorDiv.style.fontSize = '0.875rem';
+            errorDiv.style.marginTop = '0.5rem';
+            errorDiv.textContent = message;
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearFieldError(field) {
+            field.style.borderColor = 'var(--border)';
+            field.style.boxShadow = 'none';
+            
+            const errorMessage = field.parentNode.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+        }
+
+        function showError(message) {
+            // Create temporary error notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--error);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function isValidPhone(phone) {
+            return /^[\+]?[\d\s\-\(\)]{10,}$/.test(phone);
+        }
+
+        function collectFormData() {
+            const features = Array.from(document.querySelectorAll('input[name="features"]:checked'))
+                .map(f => f.value);
+            const plan = document.querySelector('input[name="plan"]:checked');
+            
+            return {
+                fullName: document.getElementById('fullName').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                company: document.getElementById('company').value,
+                companySize: document.getElementById('companySize').value,
+                features: features,
+                cameraCount: document.getElementById('cameraCount').value,
+                demoDate: document.getElementById('demoDate').value,
+                demoTime: document.getElementById('demoTime').value,
+                currentSolution: document.getElementById('currentSolution').value,
+                requirements: document.getElementById('requirements').value,
+                plan: plan ? plan.value : ''
+            };
+        }
+
+        function submitForm(formData) {
+            // Show loading state
+            const submitBtn = document.querySelector('.submit-section .btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scheduling...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Success notification
+                showSuccessMessage();
+                
+                // Reset form
+                document.getElementById('demo-request-form').reset();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                console.log('Demo request submitted:', formData);
+            }, 2000);
+        }
+
+        function showSuccessMessage() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--glassmorphism);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glassmorphism-border);
+                color: var(--text-primary);
+                padding: 2rem;
+                border-radius: 20px;
+                z-index: 1000;
+                text-align: center;
+                min-width: 400px;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                <h3 style="margin-bottom: 1rem; color: var(--success);">Demo Scheduled!</h3>
+                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                    Thank you for your interest in VisionXpert! Our team will contact you shortly to confirm your demo.
+                </p>
+                <button onclick="this.parentElement.remove()" 
+                        style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; cursor: pointer;">
+                    Got it!
+                </button>
+            `;
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            `;
+            backdrop.onclick = () => {
+                backdrop.remove();
+                notification.remove();
+            };
+            
+            document.body.appendChild(backdrop);
+            document.body.appendChild(notification);
+        }
+
+        // Enhanced 3D background
+        const backgroundInit = () => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('background-canvas').appendChild(renderer.domElement);
+            
+            // Enhanced particles with better colors
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 3000;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            const colorsArray = new Float32Array(particlesCount * 3);
+            const sizesArray = new Float32Array(particlesCount);
+            
+            for (let i = 0; i < particlesCount * 3; i += 3) {
+                // Position
+                posArray[i] = (Math.random() - 0.5) * 100;
+                posArray[i + 1] = (Math.random() - 0.5) * 100;
+                posArray[i + 2] = (Math.random() - 0.5) * 100;
+                
+                // Modern color palette
+                const colorChoice = Math.random();
+                if (colorChoice < 0.3) {
+                    // Purple hues
+                    colorsArray[i] = 0.4 + Math.random() * 0.3; // R
+                    colorsArray[i + 1] = 0.2 + Math.random() * 0.3; // G
+                    colorsArray[i + 2] = 0.7 + Math.random() * 0.3; // B
+                } else if (colorChoice < 0.6) {
+                    // Blue hues
+                    colorsArray[i] = 0.1 + Math.random() * 0.3; // R
+                    colorsArray[i + 1] = 0.4 + Math.random() * 0.3; // G
+                    colorsArray[i + 2] = 0.8 + Math.random() * 0.2; // B
+                } else {
+                    // Cyan hues
+                    colorsArray[i] = 0.0 + Math.random() * 0.2; // R
+                    colorsArray[i + 1] = 0.6 + Math.random() * 0.4; // G
+                    colorsArray[i + 2] = 0.8 + Math.random() * 0.2; // B
+                }
+                
+                sizesArray[i/3] = Math.random() * 2 + 0.5;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+            particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizesArray, 1));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particleMaterial);
+            scene.add(particlesMesh);
+            
+            // Modern geometric shapes
+            const shapes = [];
+            
+            // Dodecahedron
+            const dodecaGeometry = new THREE.DodecahedronGeometry(4);
+            const dodecaMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x6366f1,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const dodeca = new THREE.Mesh(dodecaGeometry, dodecaMaterial);
+            dodeca.position.set(-25, 15, -40);
+            scene.add(dodeca);
+            shapes.push(dodeca);
+            
+            // Torus
+            const torusGeometry = new THREE.TorusGeometry(5, 2, 16, 100);
+            const torusMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x8b5cf6, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+            torus.position.set(25, -15, -30);
+            scene.add(torus);
+            shapes.push(torus);
+            
+            // Icosahedron
+            const icosaGeometry = new THREE.IcosahedronGeometry(3);
+            const icosaMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x06b6d4, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const icosa = new THREE.Mesh(icosaGeometry, icosaMaterial);
+            icosa.position.set(0, 20, -50);
+            scene.add(icosa);
+            shapes.push(icosa);
+            
+            camera.position.z = 30;
+            
+            // Enhanced mouse interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+            
+            // Animation loop with smooth interactions
+            const animate = () => {
+                requestAnimationFrame(animate);
+                
+                // Smooth mouse following
+                targetX += (mouseX - targetX) * 0.02;
+                targetY += (mouseY - targetY) * 0.02;
+                
+                // Rotate particles
+                particlesMesh.rotation.x += 0.0002;
+                particlesMesh.rotation.y += 0.0003;
+                particlesMesh.rotation.x += targetY * 0.0003;
+                particlesMesh.rotation.y += targetX * 0.0003;
+                
+                // Animate shapes
+                shapes.forEach((shape, index) => {
+                    shape.rotation.x += 0.003 + index * 0.001;
+                    shape.rotation.y += 0.004 + index * 0.0005;
+                    shape.rotation.z += 0.002;
+                });
+                
+                renderer.render(scene, camera);
+            };
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            animate();
+        };
+
+        // Enhanced card interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.plan-card, .form-section');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        // Dark mode toggle (placeholder)
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            // Animate the icon
+            this.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // You could implement actual theme switching here
+            console.log('Theme toggle clicked');
+        });
+
+        // Initialize 3D background
+        window.addEventListener('load', backgroundInit);
+
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

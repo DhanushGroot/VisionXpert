@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>VisionXpert - 3D Technology Showcase</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="{{url_for('static', filename='image.png')}}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Add these CSS rules to the existing <style> section in the head */
+
+/* Neon blue background gradient */
+body {
+  background: linear-gradient(135deg, #0a192f, #172a45, #0b2349);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced 3D UI elements with neon blue glow */
+.feature-box, .demo-card, .tech-specs {
+  box-shadow: 0 15px 50px rgba(66, 153, 225, 0.15);
+  border: 1px solid rgba(66, 153, 225, 0.1);
+}
+
+.feature-icon {
+  background: linear-gradient(135deg, #00a8ff, #0097e6);
+  box-shadow: 0 0 15px rgba(0, 168, 255, 0.7);
+}
+
+.section-title::after {
+  background: #00a8ff;
+  box-shadow: 0 0 10px #00a8ff;
+}
+
+/* Neon glow effects */
+.glow-text {
+  text-shadow: 0 0 10px rgba(66, 153, 225, 0.7);
+}
+
+.glow-box {
+  box-shadow: 0 0 20px rgba(66, 153, 225, 0.4);
+}
+
+/* Enhanced 3D depth for cards */
+.feature-box, .demo-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Custom canvas background overlay */
+#canvas-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, #0a192f 90%);
+  pointer-events: none;
+}
+
+/* Enhanced particle effects */
+.cta-particle {
+  box-shadow: 0 0 15px #00a8ff;
+}
+
+/* Navbar enhancements */
+.navbar-scrolled {
+  background: linear-gradient(135deg, rgba(10, 25, 47, 0.9), rgba(23, 42, 69, 0.9));
+  box-shadow: 0 4px 20px rgba(66, 153, 225, 0.3);
+}
+
+/* Make the section dark backgrounds more blue-toned */
+.section-dark {
+  background: linear-gradient(135deg, #0a192f, #172a45);
+}
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a0ca3;
+      --secondary: #f72585;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --info: #7209b7;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gradient: linear-gradient(135deg, var(--primary), var(--info));
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .navbar-custom {
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-scrolled {
+      background: var(--gradient);
+      backdrop-filter: blur(20px);
+    }
+    
+    .navbar-brand {
+      color: white !important;
+      font-weight: 700;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-link {
+      color: white !important;
+      font-weight: 500;
+      margin: 0 5px;
+      padding: 8px 16px !important;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background-color: rgba(255,255,255,0.2) !important;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--secondary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after, .nav-link.active::after {
+      width: 100%;
+    }
+    
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+    }
+    
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    .overlay-content {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      z-index: 10;
+    }
+    
+    .overlay-content h1 {
+      font-size: 60px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      animation: fadeInDown 1.5s ease;
+    }
+    
+    .overlay-content p {
+      font-size: 24px;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+      animation: fadeInUp 1.5s ease;
+    }
+    
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+      color: white;
+      font-size: 20px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(-50%);
+      }
+      40% {
+        transform: translateY(-20px) translateX(-50%);
+      }
+      60% {
+        transform: translateY(-10px) translateX(-50%);
+      }
+    }
+    
+    .section {
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .section-dark {
+      background: linear-gradient(135deg, #212529, #343a40);
+      color: white;
+    }
+    
+    .section-title {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--secondary);
+      border-radius: 2px;
+    }
+    
+    .section-subtitle {
+      font-size: 18px;
+      max-width: 800px;
+      margin: 0 auto 60px;
+      text-align: center;
+      opacity: 0.8;
+    }
+    
+    .feature-box {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    .feature-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+    
+    .feature-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      color: white;
+    }
+    
+    .feature-box:hover::before {
+      opacity: 1;
+    }
+    
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 25px;
+      font-size: 30px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-box:hover .feature-icon {
+      background: white;
+      color: var(--primary);
+    }
+    
+    .feature-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-box p {
+      transition: all 0.3s ease;
+    }
+    
+    .demo-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .demo-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    
+    .demo-img-container {
+      height: 250px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .demo-img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .demo-card:hover .demo-img {
+      transform: scale(1.1);
+    }
+    
+    .demo-content {
+      padding: 30px;
+      position: relative;
+    }
+    
+    .demo-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    .demo-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 1.5px;
+    }
+    
+    .btn-demo {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-demo:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .tech-specs {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 80px;
+    }
+    
+    .spec-row {
+      display: flex;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .spec-row:hover {
+      transform: translateX(10px);
+    }
+    
+    .spec-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      margin-right: 20px;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .spec-row:hover .spec-icon {
+      transform: rotateY(180deg);
+    }
+    
+    .spec-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .cta-section {
+      background: var(--gradient);
+      color: white;
+      text-align: center;
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta-particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    .cta-title {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .btn-cta {
+      background: white;
+      color: var(--primary);
+      font-weight: 600;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 18px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+    
+    .btn-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .btn-cta:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+    
+    .btn-cta:hover::before {
+      left: 100%;
+    }
+    
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 30px 0;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .footer-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .footer-logo {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .footer-link {
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0 15px;
+      text-decoration: none;
+      transition: all 0.3s;
+      position: relative;
+      padding: 5px 0;
+    }
+    
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: white;
+      transition: width 0.3s ease;
+    }
+    
+    .footer-link:hover {
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .footer-link:hover::after {
+      width: 100%;
+    }
+    
+    .footer-social {
+      display: flex;
+    }
+    
+    .social-icon {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 10px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .social-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    .social-icon:hover {
+      transform: translateY(-3px) scale(1.2);
+    }
+    
+    .social-icon:hover::before {
+      opacity: 1;
+    }
+    
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      z-index: 1001;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    
+    .floating-nav {
+      position: fixed;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-dot::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .nav-dot:hover::before {
+      opacity: 1;
+      right: 25px;
+    }
+    
+    .nav-dot.active {
+      background: var(--secondary);
+      transform: scale(1.5);
+    }
+    
+    .nav-dot:hover {
+      background: white;
+    }
+    
+    .scene-selector {
+      position: fixed;
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .scene-btn {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 22px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    
+    .scene-btn::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 75px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .scene-btn:hover::before {
+      opacity: 1;
+      left: 70px;
+    }
+    
+    .scene-btn:hover {
+      background: var(--secondary);
+      transform: scale(1.1);
+    }
+    
+    .scene-btn.active {
+      background: var(--primary);
+      transform: scale(1.1);
+    }
+    
+    /* 3D Object Styles */
+    .interactive-3d-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+      margin: 40px 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    }
+    
+    .interactive-3d-canvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .interactive-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      z-index: 10;
+    }
+    
+    .control-btn {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+    
+    .control-btn:hover {
+      background: var(--secondary);
+      transform: scale(1.1);
+    }
+    
+    /* Glowing effect for 3D elements */
+    .glow {
+      filter: drop-shadow(0 0 10px rgba(67, 97, 238, 0.7));
+    }
+    
+    /* Animation classes */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Particle background */
+    .particle-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    @media (max-width: 992px) {
+      .floating-nav, .scene-selector {
+        display: none;
+      }
+      
+      .overlay-content h1 {
+        font-size: 40px;
+      }
+      
+      .overlay-content p {
+        font-size: 18px;
+      }
+      
+      .section {
+        padding: 80px 0;
+      }
+      
+      .section-title {
+        font-size: 32px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .footer-logo, .footer-links, .footer-social {
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .overlay-content h1 {
+        font-size: 32px;
+      }
+      
+      .overlay-content p {
+        font-size: 16px;
+      }
+      
+      .spec-row {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .spec-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .interactive-3d-container {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar-container">
+  <div class="progress-bar" id="scrollProgress"></div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <svg class="logo" width="36" height="36" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4361ee" />
+            <stop offset="100%" stop-color="#7209b7" />
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="80" fill="white" />
+        <path d="M100,30 L160,70 L160,130 L100,170 L40,130 L40,70 Z" fill="url(#logoGradient)" class="logo-shape" />
+        <circle cx="100" cy="100" r="30" fill="white" />
+        <circle cx="100" cy="100" r="20" fill="url(#logoGradient)" class="logo-center" />
+      </svg>
+      VisionXpert 
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="request-demo-page.html"><i class="fas fa-calendar-check"></i> Request Demo</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="about-us-page.html"><i class="fas fa-info-circle"></i> About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('userlog') }}">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="floating-nav">
+  <div class="nav-dot active" data-section="hero" data-tooltip="Home"></div>
+  <div class="nav-dot" data-section="features" data-tooltip="Features"></div>
+  <div class="nav-dot" data-section="technology" data-tooltip="Technology"></div>
+  <div class="nav-dot" data-section="cta" data-tooltip="Get Started"></div>
+</div>
+
+<div id="canvas-container">
+  <canvas id="background-canvas"></canvas>
+</div>
+
+<section id="hero">
+  <div class="overlay-content">
+    <h1 class="animate__animated animate__fadeInDown">Experience Security in 3D</h1>
+    <p class="animate__animated animate__fadeInUp">Explore VisionXpert's anomaly detection technology in an interactive 3D environment</p>
+  </div>
+  <div class="scroll-indicator">
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="container">
+    <h2 class="section-title fade-in">Advanced 3D Detection Features</h2>
+    <p class="section-subtitle fade-in">Our cutting-edge technology brings security monitoring into three dimensions, allowing for more accurate threat detection and analysis</p>
+    
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-cube"></i>
+          </div>
+          <h3 class="feature-title">3D Object Recognition</h3>
+          <p>Identify and classify objects in three-dimensional space with unparalleled accuracy, even in challenging environments.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-street-view"></i>
+          </div>
+          <h3 class="feature-title">Spatial Awareness</h3>
+          <p>Calculate precise distances between objects and track movement patterns in real-time for enhanced situational awareness.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="feature-title">Predictive Analytics</h3>
+          <p>Leverage our algorithms to predict potential security threats before they occur, giving you a crucial edge in prevention.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-route"></i>
+          </div>
+          <h3 class="feature-title">Movement Tracking</h3>
+          <p>Follow subjects seamlessly across cameras with our advanced 3D reconstruction technology that maintains identity across viewpoints.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3 class="feature-title">Perimeter Protection</h3>
+          <p>Create virtual boundaries in 3D space and receive instant alerts when unauthorized subjects breach these defined areas.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-sliders-h"></i>
+          </div>
+          <h3 class="feature-title">Customizable Detection</h3>
+          <p>Fine-tune detection parameters to meet your specific security needs with our highly configurable system.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="technology" class="section">
+  <div class="container">
+    <h2 class="section-title fade-in">Our 3D Technology</h2>
+    <p class="section-subtitle fade-in">Explore the cutting-edge components that make our 3D security visualization possible</p>
+    
+    <div class="interactive-3d-container fade-in">
+      <canvas class="interactive-3d-canvas" id="tech-canvas"></canvas>
+      <div class="interactive-controls">
+        <div class="control-btn" id="rotate-left"><i class="fas fa-undo"></i></div>
+        <div class="control-btn" id="zoom-in"><i class="fas fa-search-plus"></i></div>
+        <div class="control-btn" id="zoom-out"><i class="fas fa-search-minus"></i></div>
+        <div class="control-btn" id="rotate-right"><i class="fas fa-redo"></i></div>
+      </div>
+    </div>
+    
+    <div class="tech-specs fade-in">
+      <div class="spec-row">
+        <div class="spec-icon">
+          <i class="fas fa-network-wired"></i>
+        </div>
+        <div class="spec-content">
+          <h3 class="spec-title">Neural Network Architecture</h3>
+          <p>Our proprietary deep learning networks are specifically designed for understanding 3D spatial relationships and object classification.</p>
+        </div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-icon">
+          <i class="fas fa-camera"></i>
+        </div>
+        <div class="spec-content">
+          <h3 class="spec-title">Multi-Camera Integration</h3>
+          <p>Seamlessly combine feeds from multiple cameras to create a cohesive 3D model of your entire monitored environment.</p>
+        </div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-icon">
+          <i class="fas fa-sync-alt"></i>
+        </div>
+        <div class="spec-content">
+          <h3 class="spec-title">Adaptive Learning</h3>
+          <p>Our system continuously learns and improves its detection capabilities based on your specific environment and feedback.</p>
+        </div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-icon">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <div class="spec-content">
+          <h3 class="spec-title">Real-Time Processing</h3>
+          <p>Analyze video feeds and detect anomalies instantly with our optimized processing algorithms running on specialized hardware.</p>
+        </div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-icon">
+          <i class="fas fa-cloud"></i>
+        </div>
+        <div class="spec-content">
+          <h3 class="spec-title">Cloud Integration</h3>
+          <p>Scale your security operation with our cloud-based processing and storage solutions, accessible from anywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="cta-section">
+  <div class="container">
+    <h2 class="cta-title fade-in">Ready to elevate your security infrastructure?</h2>
+    <p class="fade-in mb-4">Experience the power of 3D security visualization with a personalized demonstration</p>
+    <a href="request-demo-page.html" class="btn btn-cta fade-in">Request Demo</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <svg class="logo me-2" width="24" height="24" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="80" fill="white" />
+          <path d="M100,30 L160,70 L160,130 L100,170 L40,130 L40,70 Z" fill="url(#logoGradient)" />
+          <circle cx="100" cy="100" r="30" fill="white" />
+          <circle cx="100" cy="100" r="20" fill="url(#logoGradient)" />
+        </svg>
+        VisionXpert
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="#" class="footer-link">Contact Us</a>
+        <a href="#" class="footer-link">Careers</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <p class="mb-0">&copy; 2025 VisionXpert. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', function() {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById("scrollProgress").style.width = scrolled + "%";
+  });
+  
+  // Navbar color change on scroll
+  window.addEventListener('scroll', function() {
+    const navbar = document.getElementById('mainNav');
+    if (window.scrollY > 50) {
+      navbar.classList.add('navbar-scrolled');
+    } else {
+      navbar.classList.remove('navbar-scrolled');
+    }
+  });
+  
+  // Navigation dots
+  const sections = document.querySelectorAll('section');
+  const navDots = document.querySelectorAll('.nav-dot');
+  
+  window.addEventListener('scroll', function() {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+        current = section.getAttribute('id');
+      }
+    });
+    
+    navDots.forEach(dot => {
+      dot.classList.remove('active');
+      if (dot.getAttribute('data-section') === current) {
+        dot.classList.add('active');
+      }
+    });
+  });
+  
+  navDots.forEach(dot => {
+    dot.addEventListener('click', function() {
+      const targetSection = document.getElementById(this.getAttribute('data-section'));
+      window.scrollTo({
+        top: targetSection.offsetTop,
+        behavior: 'smooth'
+      });
+    });
+  });
+  
+  // Scene selector
+  const sceneBtns = document.querySelectorAll('.scene-btn');
+  
+  sceneBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      sceneBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      changeScene(this.getAttribute('data-scene'));
+    });
+  });
+  
+  // Scroll animation for fade-in elements
+  const fadeElements = document.querySelectorAll('.fade-in');
+  
+  const fadeInObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  fadeElements.forEach(element => {
+    fadeInObserver.observe(element);
+  });
+  
+  // Three.js Background
+  let scene, camera, renderer, particles;
+  let cameraControls = false;
+  let currentScene = 'cityscape';
+  
+  function initThree() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
+    
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background-canvas'), antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    changeScene('cityscape');
+    animate();
+  }
+  
+  function changeScene(sceneName) {
+    // Clear previous scene
+    if (particles) {
+      scene.remove(particles);
+    }
+    
+    currentScene = sceneName;
+    
+    // Create new scene
+    const particleGeometry = new THREE.BufferGeometry();
+    const particleCount = 1500;
+    
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    let scale, colorBase, speed;
+    
+    switch(sceneName) {
+       case 'cityscape':
+       scale = 100;
+       colorBase = new THREE.Color(0x00a8ff);  // Changed to neon blue
+       speed = 0.01;
+       break;
+       case 'retail':
+       scale = 80;
+       colorBase = new THREE.Color(0x0097e6);  // Changed to different blue shade
+       speed = 0.02;
+       break;
+       case 'industrial':
+       scale = 120;
+       colorBase = new THREE.Color(0x48dbfb);  // Changed to light blue
+       speed = 0.005;
+       break;
+       case 'campus':
+       scale = 90;
+       colorBase = new THREE.Color(0x1e90ff);  // Changed to royal blue
+       speed = 0.015;
+       break;
+    }
+    
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * scale;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * scale;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * scale;
+      
+      const color = colorBase.clone();
+      color.offsetHSL(Math.random() * 0.1, Math.random() * 0.5, Math.random() * 0.5);
+      
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+    }
+    
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const particleMaterial = new THREE.PointsMaterial({
+    size: 0.7,  // Slightly larger
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending  // Add this for glow
+    });
+    
+    particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
+    
+    // Animate based on scene
+    particleAnimate = function() {
+      const positions = particles.geometry.attributes.position.array;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        
+        // Custom animation based on scene
+        switch(currentScene) {
+          case 'cityscape':
+            positions[i3 + 1] += Math.sin(Date.now() * 0.001 + i) * speed;
+            break;
+          case 'retail':
+            positions[i3] += Math.cos(Date.now() * 0.001 + i) * speed;
+            positions[i3 + 1] += Math.sin(Date.now() * 0.001 + i) * speed;
+            break;
+          case 'industrial':
+            positions[i3 + 2] += Math.sin(Date.now() * 0.0005 + i) * speed;
+            break;
+          case 'campus':
+            positions[i3] += Math.cos(Date.now() * 0.001 + i * 0.1) * speed;
+            positions[i3 + 2] += Math.sin(Date.now() * 0.001 + i * 0.1) * speed;
+            break;
+        }
+      }
+      
+      particles.geometry.attributes.position.needsUpdate = true;
+    };
+  }
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    if (particleAnimate) {
+      particleAnimate();
+    }
+    
+    if (cameraControls) {
+      camera.position.x = Math.sin(Date.now() * 0.0003) * 30;
+      camera.position.z = Math.cos(Date.now() * 0.0003) * 30;
+      camera.lookAt(scene.position);
+    }
+    
+    renderer.render(scene, camera);
+  }
+  
+  // Initialize 3D environment on load
+  window.addEventListener('load', initThree);
+  
+  // Interactive 3D technology visualization
+  let techScene, techCamera, techRenderer, techObject;
+  
+  function initTechCanvas() {
+    techScene = new THREE.Scene();
+    techCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    techCamera.position.z = 5;
+    
+    const techCanvas = document.getElementById('tech-canvas');
+    techRenderer = new THREE.WebGLRenderer({ canvas: techCanvas, antialias: true, alpha: true });
+    techRenderer.setSize(techCanvas.clientWidth, techCanvas.clientHeight);
+    
+    // Create a neural network visualization
+    const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0x4361ee });
+    
+    techObject = new THREE.Group();
+    
+    // Create nodes
+    for (let i = 0; i < 20; i++) {
+      const node = new THREE.Mesh(geometry, material);
+      node.position.x = (Math.random() - 0.5) * 5;
+      node.position.y = (Math.random() - 0.5) * 5;
+      node.position.z = (Math.random() - 0.5) * 5;
+      techObject.add(node);
+    }
+    
+    // Create connections
+    const lineGeometry = new THREE.BufferGeometry();
+    const linePositions = [];
+    
+    for (let i = 0; i < techObject.children.length; i++) {
+      for (let j = i + 1; j < techObject.children.length; j++) {
+        if (Math.random() > 0.7) continue;
+        
+        const node1 = techObject.children[i];
+        const node2 = techObject.children[j];
+        
+        linePositions.push(
+          node1.position.x, node1.position.y, node1.position.z,
+          node2.position.x, node2.position.y, node2.position.z
+        );
+      }
+    }
+    
+    lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+    
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x4895ef, transparent: true, opacity: 0.5 });
+    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+    
+    techObject.add(lines);
+    techScene.add(techObject);
+    
+    // Controls
+    document.getElementById('rotate-left').addEventListener('click', () => {
+      gsap.to(techObject.rotation, { y: techObject.rotation.y - Math.PI/4, duration: 1, ease: 'power2.out' });
+    });
+    
+    document.getElementById('rotate-right').addEventListener('click', () => {
+      gsap.to(techObject.rotation, { y: techObject.rotation.y + Math.PI/4, duration: 1, ease: 'power2.out' });
+    });
+    
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      gsap.to(techCamera.position, { z: Math.max(techCamera.position.z - 1, 2), duration: 1, ease: 'power2.out' });
+    });
+    
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      gsap.to(techCamera.position, { z: Math.min(techCamera.position.z + 1, 8), duration: 1, ease: 'power2.out' });
+    });
+    
+    animateTech();
+  }
+  
+  function animateTech() {
+    requestAnimationFrame(animateTech);
+    
+    // Gently rotate the object
+    techObject.rotation.y += 0.005;
+    
+    // Pulse the nodes
+    techObject.children.forEach((child, index) => {
+      if (child.type === 'Mesh') {
+        child.scale.x = child.scale.y = child.scale.z = 1 + 0.2 * Math.sin(Date.now() * 0.001 + index);
+      }
+    });
+    
+    techRenderer.render(techScene, techCamera);
+  }
+  
+  // Initialize tech canvas when section is visible
+  const techObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !techRenderer) {
+      initTechCanvas();
+    }
+  }, { threshold: 0.1 });
+  
+  techObserver.observe(document.getElementById('technology'));
+  
+  // CTA particles
+  function createParticles() {
+    const ctaSection = document.querySelector('.cta-section');
+    
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('cta-particle');
+      
+      // Random position
+      const posX = Math.random() * 100;
+      const posY = Math.random() * 100;
+      
+      // Random size
+      const size = Math.random() * 15 + 5;
+      
+      // Apply styles
+      particle.style.left = posX + '%';
+      particle.style.top = posY + '%';
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      
+      // Animate with GSAP
+      ctaSection.appendChild(particle);
+      
+      gsap.to(particle, {
+        x: (Math.random() - 0.5) * 200,
+        y: (Math.random() - 0.5) * 200,
+        opacity: 0,
+        duration: Math.random() * 5 + 5,
+        ease: 'power1.out',
+        onComplete: function() {
+          particle.remove();
+          createNewParticle();
+        }
+      });
+    }
+  }
+  
+  function createNewParticle() {
+    const ctaSection = document.querySelector('.cta-section');
+    
+    const particle = document.createElement('div');
+    particle.classList.add('cta-particle');
+    
+    // Random edge position
+    let posX, posY;
+    const edge = Math.floor(Math.random() * 4);
+    
+    switch(edge) {
+      case 0: // Top
+        posX = Math.random() * 100;
+        posY = 0;
+        break;
+      case 1: // Right
+        posX = 100;
+        posY = Math.random() * 100;
+        break;
+      case 2: // Bottom
+        posX = Math.random() * 100;
+        posY = 100;
+        break;
+      case 3: // Left
+        posX = 0;
+        posY = Math.random() * 100;
+        break;
+    }
+    
+    // Random size
+    const size = Math.random() * 10 + 5;
+    
+    // Apply styles
+    particle.style.left = posX + '%';
+    particle.style.top = posY + '%';
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    
+    // Animate with GSAP
+    ctaSection.appendChild(particle);
+    
+    gsap.to(particle, {
+      x: (Math.random() - 0.5) * 200,
+      y: (Math.random() - 0.5) * 200,
+      opacity: 0,
+      duration: Math.random() * 5 + 5,
+      ease: 'power1.out',
+      onComplete: function() {
+        particle.remove();
+        createNewParticle();
+      }
+    });
+  }
+  
+  // Initialize particles when CTA section is visible
+  const ctaObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      createParticles();
+    }
+  }, { threshold: 0.1 });
+  
+  ctaObserver.observe(document.querySelector('.cta-section'));
+</script>
+
+</body>
+</html>

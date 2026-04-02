@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>VisionXpert - Advanced Anomaly Detection System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="{{url_for('static', filename='image.png')}}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.js" integrity="sha512-o4gKX6jcK0rdciOZ9X8COYkV9gviTJAbYEVW8aC3OgIRuaKDmcT9/OFXBVzHSSOxiTjsTktqrUvCUrHkQHSn9Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0066ff;
+      --primary-dark: #0052cc;
+      --primary-light: #4d94ff;
+      --secondary: #ff3366;
+      --secondary-dark: #e6003c;
+      --secondary-light: #ff6699;
+      --tertiary: #6633ff;
+      --dark: #121824;
+      --dark-accent: #1a2030;
+      --light: #f8f9fa;
+      --danger: #dc3545;
+      --success: #00cc88;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --glass: rgba(255, 255, 255, 0.1);
+      --glass-dark: rgba(0, 0, 0, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.15);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--dark);
+      overflow-x: hidden;
+      color: var(--light);
+    }
+    
+    .background-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .navbar {
+      background-color: rgba(18, 24, 36, 0.85);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .navbar-brand {
+      color: var(--light);
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .navbar-brand i {
+      margin-right: 15px;
+      color: var(--primary);
+      font-size: 1.8rem;
+      text-shadow: 0 0 10px var(--primary-light);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px var(--primary-light); }
+      50% { text-shadow: 0 0 20px var(--primary), 0 0 30px var(--primary-light); }
+      100% { text-shadow: 0 0 10px var(--primary-light); }
+    }
+    
+    .navbar-brand:hover {
+      color: var(--primary);
+    }
+    
+    .navbar-container {
+      width: 90%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      list-style: none;
+    }
+    
+    .navbar-menu li {
+      margin-left: 25px;
+    }
+    
+    .navbar-menu a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    
+    .navbar-menu a i {
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .navbar-menu a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s ease;
+    }
+    
+    .navbar-menu a:hover {
+      color: var(--primary);
+      background: var(--glass);
+    }
+    
+    .navbar-menu a:hover:after {
+      width: 100%;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 60px auto;
+    }
+    
+    .hero-section {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+    
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 3rem;
+      color: var(--light);
+      text-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+      background: linear-gradient(135deg, var(--light), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 40px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .detection-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+      perspective: 1000px;
+    }
+    
+    .card {
+      position: relative;
+      background: rgba(26, 32, 48, 0.7);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
+                  0 1px 2px rgba(0, 0, 0, 0.2),
+                  0 0 20px rgba(0, 102, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05));
+      pointer-events: none;
+    }
+    
+    .card:hover {
+      transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                  0 0 30px rgba(0, 102, 255, 0.3);
+      border-color: var(--primary);
+    }
+    
+    .card-content {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--light);
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .card-icon-container {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--tertiary));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 
+                  0 0 15px rgba(102, 51, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card-icon-container:before {
+      content: '';
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+      top: -25%;
+      left: -25%;
+      opacity: 0;
+      transition: all 0.5s ease;
+      transform: scale(0);
+    }
+    
+    .card:hover .card-icon-container:before {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    
+    .card-icon {
+      font-size: 2.5rem;
+      color: white;
+      z-index: 1;
+    }
+    
+    .file-input-container {
+      width: 100%;
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .file-input {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      background: var(--glass);
+      border-radius: 12px;
+      border: 1px dashed var(--glass-border);
+      color: var(--light);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .file-input-label:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    .file-input-label i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--primary), var(--tertiary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+      width: 100%;
+    }
+    
+    .btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
+    
+    .btn:hover:before {
+      left: 100%;
+    }
+    
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 102, 255, 0.6);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 10px rgba(0, 102, 255, 0.4);
+    }
+    
+    .btn i {
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .footer {
+      background-color: rgba(18, 24, 36, 0.85);
+      backdrop-filter: blur(15px);
+      padding: 30px 0;
+      text-align: center;
+      margin-top: 80px;
+      border-top: 1px solid var(--glass-border);
+    }
+    
+    .footer p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+    
+    .footer .social-icons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .footer .social-icons a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 10px;
+      color: var(--light);
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .footer .social-icons a:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+    
+    /* 3D Loading effect */
+    .loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(18, 24, 36, 0.95);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      backdrop-filter: blur(15px);
+    }
+    
+    .loader-content {
+      text-align: center;
+    }
+    
+    .spinner-3d {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      perspective: 500px;
+      margin-bottom: 30px;
+    }
+    
+    .spinner-cube {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      animation: spinner 5s infinite linear;
+    }
+    
+    .spinner-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--tertiary));
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      opacity: 0.9;
+    }
+    
+    .spinner-face:nth-child(1) { transform: rotateY(0deg) translateZ(50px); }
+    .spinner-face:nth-child(2) { transform: rotateY(90deg) translateZ(50px); }
+    .spinner-face:nth-child(3) { transform: rotateY(180deg) translateZ(50px); }
+    .spinner-face:nth-child(4) { transform: rotateY(270deg) translateZ(50px); }
+    .spinner-face:nth-child(5) { transform: rotateX(90deg) translateZ(50px); }
+    .spinner-face:nth-child(6) { transform: rotateX(-90deg) translateZ(50px); }
+    
+    @keyframes spinner {
+      0% { transform: rotateX(0deg) rotateY(0deg); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+    
+    .loader-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 15px;
+    }
+    
+    .loader-subtext {
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .progress-bar {
+      width: 300px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 20px;
+      position: relative;
+    }
+    
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--tertiary));
+      border-radius: 3px;
+      animation: fill 3s ease-in-out infinite;
+    }
+    
+    @keyframes fill {
+      0% { width: 0%; }
+      50% { width: 100%; }
+      100% { width: 0%; }
+    }
+    
+    /* Floating elements */
+    .floating-element {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.4;
+      filter: blur(5px);
+    }
+    
+    .floating-1 {
+      top: 10%;
+      right: 10%;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 15s ease-in-out infinite;
+    }
+    
+    .floating-2 {
+      bottom: 30%;
+      left: 5%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 18s ease-in-out infinite reverse;
+    }
+    
+    .floating-3 {
+      top: 60%;
+      right: 15%;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, var(--tertiary) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 20s ease-in-out infinite 2s;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.1); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    
+    /* Card hover effects */
+    .card-glow {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: radial-gradient(circle at var(--x) var(--y), 
+                  rgba(var(--primary-rgb), 0.1), 
+                  transparent 40%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .detection-cards {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      
+      .navbar-container {
+        flex-direction: column;
+        padding: 15px 0;
+      }
+      
+      .navbar-menu {
+        margin-top: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .navbar-menu li {
+        margin: 5px 10px;
+      }
+      
+      .title {
+        font-size: 2.5rem;
+      }
+      
+      .floating-element {
+        transform: scale(0.7);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .detection-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .title {
+        font-size: 2rem;
+      }
+      
+      .card-icon-container {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .footer .social-icons a {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+      }
+    }
+    
+    /* Particle effects */
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    /* Dark mode toggle */
+    .dark-mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--tertiary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .dark-mode-toggle:hover {
+      transform: translateY(-5px);
+    }
+    
+    .dark-mode-toggle i {
+      font-size: 1.5rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-wrapper">
+    <canvas id="canvas"></canvas>
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+    <div class="floating-element floating-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-shield-alt"></i>
+        VisionXpert - Advanced Anomaly Detection System
+      </a>
+      <ul class="navbar-menu">
+        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="about-us-page.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+        <li><a href="request-demo-page.html"><i class="fas fa-paper-plane"></i> Request Demo</a></li>
+        <li><a href="/"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="hero-section">
+      <h1 class="title">Intelligent Surveillance & Detection</h1>
+      <p class="subtitle">Advanced AI-powered vision system to detect and prevent critical security incidents in real-time</p>
+    </div>
+    
+    <div class="detection-cards">
+      <!-- YOLO Weapon Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live1')}}" id="form2">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-crosshairs card-icon"></i>
+            </div>
+            <h2 class="card-title">Weapon Detection</h2>
+            <div class="file-input-container">
+              <input type="file" class="file-input" id="filename1" name="filename1">
+              <label for="filename1" class="file-input-label">
+                <i class="fas fa-upload"></i> Choose Video File
+              </label>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect Weapons</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+
+      <!-- YOLO Accident Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live2')}}" id="form3">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-car-crash card-icon"></i>
+            </div>
+            <h2 class="card-title">Accident Detection</h2>
+            <div class="file-input-container">
+              <input type="file" class="file-input" id="filename2" name="filename2">
+              <label for="filename2" class="file-input-label">
+                <i class="fas fa-upload"></i> Choose Video File
+              </label>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect Accidents</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+
+      <!-- YOLO Explosion Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live3')}}" id="form4">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-bomb card-icon"></i>
+            </div>
+            <h2 class="card-title">Explosion Detection</h2>
+            <div class="file-input-container">
+              <input type="file" class="file-input" id="filename3" name="filename3">
+              <label for="filename3" class="file-input-label">
+                <i class="fas fa-upload"></i> Choose Video File
+              </label>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect Explosions</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+
+      <!-- Helmet Detection Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live4')}}" id="form5">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-hard-hat card-icon"></i>
+            </div>
+            <h2 class="card-title">Helmet Detection</h2>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect Helmets</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+
+      <!-- Mask Detection Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live5')}}" id="form6">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-head-side-mask card-icon"></i>
+            </div>
+            <h2 class="card-title">Mask Detection</h2>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect Masks</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+
+      <!-- Person Detection Card -->
+      <div class="card">
+        <form method="post" action="{{ url_for('Live6')}}" id="form7">
+          <div class="card-content">
+            <div class="card-icon-container">
+              <i class="fas fa-user-shield card-icon"></i>
+            </div>
+            <h2 class="card-title">Person Detection</h2>
+            <button type="submit" class="btn"><i class="fas fa-search"></i> Detect People</button>
+          </div>
+          <div class="card-glow"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p>© 2025 VisionXpert - Advanced Anomaly Detection System. All rights reserved.</p>
+  </footer>
+  
+  <div class="dark-mode-toggle">
+    <i class="fas fa-moon"></i>
+  </div>
+
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="spinner-3d">
+        <div class="spinner-cube">
+          <div class="spinner-face"><i class="fas fa-shield-alt"></i></div>
+          <div class="spinner-face"><i class="fas fa-eye"></i></div>
+          <div class="spinner-face"><i class="fas fa-camera"></i></div>
+          <div class="spinner-face"><i class="fas fa-video"></i></div>
+          <div class="spinner-face"><i class="fas fa-search"></i></div>
+          <div class="spinner-face"><i class="fas fa-server"></i></div>
+        </div>
+      </div>
+      <h3 class="loader-text">Processing Your Request</h3>
+      <p class="loader-subtext">Our AI is analyzing your video for anomalies and generating insights...</p>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+// Enhanced 3D Background Animation with Three.js
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  alpha: true,
+  antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// Create scene
+const scene = new THREE.Scene();
+
+// Create camera
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+// Create particles
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 2000;
+
+const posArray = new Float32Array(particlesCount * 3);
+const colorsArray = new Float32Array(particlesCount * 3);
+
+// Create random positions and colors for particles
+for (let i = 0; i < particlesCount * 3; i += 3) {
+  // Position
+  posArray[i] = (Math.random() - 0.5) * 20;
+  posArray[i + 1] = (Math.random() - 0.5) * 20;
+  posArray[i + 2] = (Math.random() - 0.5) * 20;
+  
+  // Colors - using brand colors
+  if (i % 9 === 0) {
+    // Primary color
+    colorsArray[i] = 0.0;     // R: #0066ff
+    colorsArray[i + 1] = 0.4; // G
+    colorsArray[i + 2] = 1.0; // B
+  } else if (i % 9 === 3) {
+    // Secondary color
+    colorsArray[i] = 1.0;     // R: #ff3366
+    colorsArray[i + 1] = 0.2; // G
+    colorsArray[i + 2] = 0.4; // B
+  } else {
+    // Tertiary color
+    colorsArray[i] = 0.4;     // R: #6633ff
+    colorsArray[i + 1] = 0.2; // G
+    colorsArray[i + 2] = 1.0; // B
+  }
+}
+
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+
+// Create material
+const particlesMaterial = new THREE.PointsMaterial({
+  size: 0.05,
+  transparent: true,
+  opacity: 0.8,
+  vertexColors: true,
+  blending: THREE.AdditiveBlending,
+  sizeAttenuation: true
+});
+
+// Create mesh
+const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particlesMesh);
+
+// Animation loop
+const clock = new THREE.Clock();
+
+function animate() {
+  const elapsedTime = clock.getElapsedTime();
+  
+  // Rotate particles
+  particlesMesh.rotation.x = elapsedTime * 0.05;
+  particlesMesh.rotation.y = elapsedTime * 0.03;
+  
+  // Move particles in waves
+  const positions = particlesMesh.geometry.attributes.position.array;
+  for (let i = 0; i < positions.length; i += 3) {
+    const x = positions[i];
+    const y = positions[i + 1];
+    const z = positions[i + 2];
+    
+    positions[i + 1] = y + Math.sin(elapsedTime + x) * 0.003;
+  }
+  particlesMesh.geometry.attributes.position.needsUpdate = true;
+  
+  // Render
+  renderer.render(scene, camera);
+  
+  // Call animate again on the next frame
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  // Update camera
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  
+  // Update renderer
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+// Card hover effects
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const xPercent = `${(x / rect.width) * 100}%`;
+    const yPercent = `${(y / rect.height) * 100}%`;
+    
+    const cardGlow = card.querySelector('.card-glow');
+    if (cardGlow) {
+      cardGlow.style.setProperty('--x', xPercent);
+      cardGlow.style.setProperty('--y', yPercent);
+      cardGlow.style.opacity = '1';
+    }
+    
+    // Slight rotation on card
+    const rotateX = (rect.height / 2 - y) / 10;
+    const rotateY = (x - rect.width / 2) / 10;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+  });
+  
+  card.addEventListener('mouseleave', () => {
+    const cardGlow = card.querySelector('.card-glow');
+    if (cardGlow) {
+      cardGlow.style.opacity = '0';
+    }
+    
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+    card.style.transition = 'transform 0.5s ease';
+  });
+});
+
+// File input handling
+document.querySelectorAll('.file-input').forEach(input => {
+  input.addEventListener('change', function() {
+    const fileName = this.files[0]?.name || 'Choose Video File';
+    const label = this.nextElementSibling;
+    label.innerHTML = `<i class="fas fa-upload"></i> ${fileName}`;
+  });
+});
+
+// Modified form submission handling to show loader before webcam opens
+document.querySelectorAll('form').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    // Prevent actual form submission
+    e.preventDefault();
+    
+    // Show loader
+    document.getElementById('loader').style.display = 'flex';
+    
+    // Simulate webcam initialization
+    // In a real implementation, you would start your webcam here
+    // and only hide the loader once the webcam is ready
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      
+      // Here you would normally activate the webcam
+      // For demonstration, we'll show a notification
+      showNotification('Webcam activated successfully!', 'success');
+      
+      // For demo purposes only - you would replace this with actual webcam code
+      simulateWebcamView();
+    }, 3000); // 3 seconds delay to simulate webcam initialization time
+  });
+});
+
+// Function to simulate webcam view (for demonstration only)
+function simulateWebcamView() {
+  // Create a webcam simulation container
+  const webcamContainer = document.createElement('div');
+  webcamContainer.style.position = 'fixed';
+  webcamContainer.style.top = '0';
+  webcamContainer.style.left = '0';
+  webcamContainer.style.width = '100%';
+  webcamContainer.style.height = '100%';
+  webcamContainer.style.backgroundColor = 'rgba(0,0,0,0.9)';
+  webcamContainer.style.zIndex = '9998';
+  webcamContainer.style.display = 'flex';
+  webcamContainer.style.flexDirection = 'column';
+  webcamContainer.style.justifyContent = 'center';
+  webcamContainer.style.alignItems = 'center';
+  
+  // Add webcam placeholder
+  const webcamPlaceholder = document.createElement('div');
+  webcamPlaceholder.style.width = '640px';
+  webcamPlaceholder.style.height = '480px';
+  webcamPlaceholder.style.backgroundColor = '#222';
+  webcamPlaceholder.style.border = '3px solid var(--primary)';
+  webcamPlaceholder.style.borderRadius = '10px';
+  webcamPlaceholder.style.position = 'relative';
+  webcamPlaceholder.style.overflow = 'hidden';
+  webcamPlaceholder.innerHTML = `
+    <div style="position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; color: #fff; font-weight: bold;">
+      <i class="fas fa-circle" style="color: red; margin-right: 5px;"></i> LIVE
+    </div>
+    <div style="position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; color: #fff;">
+      <i class="fas fa-search"></i> <span id="detection-status">Scanning for anomalies...</span>
+    </div>
+  `;
+  
+  // Add close button
+  const closeButton = document.createElement('button');
+  closeButton.style.marginTop = '20px';
+  closeButton.style.padding = '10px 20px';
+  closeButton.style.background = 'var(--secondary)';
+  closeButton.style.color = 'white';
+  closeButton.style.border = 'none';
+  closeButton.style.borderRadius = '5px';
+  closeButton.style.cursor = 'pointer';
+  closeButton.innerHTML = '<i class="fas fa-times"></i> Close Webcam';
+  
+  closeButton.addEventListener('click', () => {
+    webcamContainer.remove();
+  });
+  
+  // Add elements to container
+  webcamContainer.appendChild(webcamPlaceholder);
+  webcamContainer.appendChild(closeButton);
+  
+  // Add to body
+  document.body.appendChild(webcamContainer);
+  
+  // Simulate detection in progress
+  let detectionTexts = [
+    "Scanning for anomalies...",
+    "Analyzing scene...",
+    "Processing video feed...",
+    "Performing object detection...",
+    "Evaluating potential threats..."
+  ];
+  
+  let detectionIndex = 0;
+  
+  // Update detection status text periodically
+  const detectionInterval = setInterval(() => {
+    document.getElementById('detection-status').textContent = detectionTexts[detectionIndex];
+    detectionIndex = (detectionIndex + 1) % detectionTexts.length;
+  }, 2000);
+  
+  // Simulate a detection after some time
+  setTimeout(() => {
+    clearInterval(detectionInterval);
+    document.getElementById('detection-status').innerHTML = '<span style="color: var(--success);">No anomalies detected</span>';
+  }, 10000);
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info') {
+  // Create notification element if it doesn't exist
+  if (!document.querySelector('.notification-container')) {
+    const container = document.createElement('div');
+    container.className = 'notification-container';
+    container.style.position = 'fixed';
+    container.style.top = '20px';
+    container.style.right = '20px';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+  }
+  
+  const container = document.querySelector('.notification-container');
+  
+  // Create notification
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.style.backgroundColor = type === 'success' ? 'var(--success)' : 
+                                      type === 'error' ? 'var(--danger)' : 
+                                      'var(--primary)';
+  notification.style.color = 'white';
+  notification.style.padding = '15px 20px';
+  notification.style.borderRadius = '8px';
+  notification.style.margin = '10px 0';
+  notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+  notification.style.display = 'flex';
+  notification.style.alignItems = 'center';
+  notification.style.justifyContent = 'space-between';
+  notification.style.transform = 'translateX(120%)';
+  notification.style.opacity = '0';
+  notification.style.transition = 'all 0.3s ease';
+  
+  notification.innerHTML = `
+    <div style="display: flex; align-items: center;">
+      <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                   type === 'error' ? 'fa-exclamation-triangle' : 
+                   'fa-info-circle'}" style="margin-right: 10px; font-size: 1.2rem;"></i>
+      <span>${message}</span>
+    </div>
+    <button style="background: none; border: none; color: white; cursor: pointer; margin-left: 15px;">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+  
+  // Add to container
+  container.appendChild(notification);
+  
+  // Show with animation
+  setTimeout(() => {
+    notification.style.transform = 'translateX(0)';
+    notification.style.opacity = '1';
+  }, 10);
+  
+  // Auto hide after 5 seconds
+  const hideTimeout = setTimeout(() => {
+    hideNotification(notification);
+  }, 5000);
+  
+  // Close button
+  notification.querySelector('button').addEventListener('click', () => {
+    clearTimeout(hideTimeout);
+    hideNotification(notification);
+  });
+}
+
+function hideNotification(notification) {
+  notification.style.transform = 'translateX(120%)';
+  notification.style.opacity = '0';
+  
+  // Remove from DOM after animation
+  setTimeout(() => {
+    notification.remove();
+  }, 300);
+}
+
+// Sticky navbar effect
+const navbar = document.querySelector('.navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.style.padding = '10px 0';
+    navbar.style.background = 'rgba(18, 24, 36, 0.95)';
+  } else {
+    navbar.style.padding = '15px 0';
+    navbar.style.background = 'rgba(18, 24, 36, 0.85)';
+  }
+});
+
+// Dark/Light mode toggle
+const darkModeToggle = document.querySelector('.dark-mode-toggle');
+const root = document.documentElement;
+let isDarkMode = true; // Start with dark mode
+
+darkModeToggle.addEventListener('click', () => {
+  isDarkMode = !isDarkMode;
+  
+  if (isDarkMode) {
+    // Dark mode
+    root.style.setProperty('--dark', '#121824');
+    root.style.setProperty('--dark-accent', '#1a2030');
+    root.style.setProperty('--light', '#f8f9fa');
+    darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    document.body.style.color = '#f8f9fa';
+  } else {
+    // Light mode
+    root.style.setProperty('--dark', '#f8f9fa');
+    root.style.setProperty('--dark-accent', '#e9ecef');
+    root.style.setProperty('--light', '#121824');
+    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    document.body.style.color = '#121824';
+  }
+});
+
+// Initialize tooltips (if using bootstrap)
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+
+// Animated scroll to elements
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+// Example notification for demo
+setTimeout(() => {
+  showNotification('Welcome to VisionXpert - Advanced Anomaly Detection System!', 'success');
+}, 2000);
