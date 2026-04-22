@@ -1,4 +1,3 @@
-```markdown name=README.md url=https://github.com/DhanushGroot/VisionXpert/blob/main/README.md
 <div align="center">
 
 # 👁️ VisionXpert
